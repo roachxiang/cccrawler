@@ -1,0 +1,28 @@
+spring:
+  application:
+    name: cccrawler
+  kafka:
+    bootstrap-servers: 192.168.153.135:9092
+    producer:
+      retries: 0
+      batch-size: 16384
+      buffer-memory: 33554432
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+
+logging:
+  level:
+    root: INFO
+
+kafka:
+  default:
+    topic: tradedata
+
+exchange:
+  list:
+    - name: aaa
+      tradeurl: test
+      klineurl: teset
+    - name: bbb
+      tradeurl: hest
+      klineurl: dist
