@@ -32,7 +32,10 @@ public class Crawler {
     private Logger logger = LoggerFactory.getLogger(getClass());
 
     private final List<HttpGet> httpGetList = new ArrayList<>();
-    private int total = 0;
+    private final List<HttpGet> httpKlineGetList = new ArrayList<>();
+
+    private int totalTrade = 0;
+    private int totalKline = 0;
     private int success = 0;
     private int failed = 0;
     private int cancelled = 0;
@@ -50,18 +53,24 @@ public class Crawler {
     public void init(){
         List<ExchangeEntity> exchangeEntities = properties.getList();
         for(ExchangeEntity entity : exchangeEntities){
-            if(StringUtils.isNotEmpty(entity.getTradeurl())) {
-                logger.info("Add new trade url:" + entity.getTradeurl());
-                httpGetList.add(new HttpGet(entity.getTradeurl()));
+            if(StringUtils.isNotEmpty(entity.getBtcusdt())) {
+                logger.info("Add new trade url:" + entity.getBtcusdt());
+                httpGetList.add(new HttpGet(entity.getBtcusdt()));
+            }
+
+            if(StringUtils.isNotEmpty(entity.getEthusdt())) {
+                logger.info("Add new trade url:" + entity.getEthusdt());
+                httpGetList.add(new HttpGet(entity.getEthusdt()));
             }
 
             if(StringUtils.isNotEmpty(entity.getKlineurl())) {
                 logger.info("Add new kline url:" + entity.getKlineurl());
-                httpGetList.add(new HttpGet(entity.getKlineurl()));
+                httpKlineGetList.add(new HttpGet(entity.getKlineurl()));
             }
         }
 
-        total = httpGetList.size();
+        totalTrade = httpGetList.size();
+        totalKline = httpKlineGetList.size();
     }
 
     @Scheduled(fixedRate = 1000)
@@ -91,6 +100,7 @@ public class Crawler {
                         try {
                             String uri = request.getURI().toASCIIString();
                             String content = new String(IOUtils.toByteArray(response.getEntity().getContent()));
+                            logger.info(uri + ":" + content);
                             CommonMessageEntity entity = messageConvertor.convert(uri, content);
                             kafkaProducer.send(entity);
                         } catch (IOException e) {
@@ -128,6 +138,6 @@ public class Crawler {
         long millis = sw.elapsed(MILLISECONDS);
         logger.info("time: " + millis);
         logger.info(String.format("Total %d success %d failed %d cancelled %d",
-                total, success, failed, cancelled));
+                totalTrade, success, failed, cancelled));
     }
 }

@@ -2,7 +2,8 @@ package com.hdcsd.crawler.cccrawler.entity;
 
 public class ExchangeEntity {
     private String name;
-    private String tradeurl;
+    private String btcusdt;
+    private String ethusdt;
     private String klineurl;
 
     public String getName() {
@@ -13,12 +14,20 @@ public class ExchangeEntity {
         this.name = name;
     }
 
-    public String getTradeurl() {
-        return tradeurl;
+    public String getBtcusdt() {
+        return btcusdt;
     }
 
-    public void setTradeurl(String tradeurl) {
-        this.tradeurl = tradeurl;
+    public void setBtcusdt(String btcusdt) {
+        this.btcusdt = btcusdt;
+    }
+
+    public String getEthusdt() {
+        return ethusdt;
+    }
+
+    public void setEthusdt(String ethusdt) {
+        this.ethusdt = ethusdt;
     }
 
     public String getKlineurl() {

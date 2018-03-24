@@ -19,8 +19,9 @@ import java.util.Map;
 public class MessageConvertor {
     private Logger logger = LoggerFactory.getLogger(getClass());
 
-    private Map<String, String> tradeUrlToExchange = new HashMap<>();
-    private Map<String, String> klineUrlToExchange = new HashMap<>();
+    private Map<String, String> btcToExchange = new HashMap<>();
+    private Map<String, String> ethToExchange = new HashMap<>();
+    //private Map<String, String> klineUrlToExchange = new HashMap<>();
 
     @Autowired
     private ExchangeProperties properties;
@@ -30,24 +31,31 @@ public class MessageConvertor {
         List<ExchangeEntity> exchangeEntities = properties.getList();
         for(ExchangeEntity entity : exchangeEntities){
             if(StringUtils.isNotEmpty(entity.getName())){
-                if(StringUtils.isNotEmpty(entity.getTradeurl())){
-                    tradeUrlToExchange.put(entity.getTradeurl(), entity.getName());
+                if(StringUtils.isNotEmpty(entity.getBtcusdt())){
+                    btcToExchange.put(entity.getBtcusdt(), entity.getName());
                 }
 
-                if(StringUtils.isNotEmpty(entity.getKlineurl())){
-                    klineUrlToExchange.put(entity.getKlineurl(), entity.getName());
+                if(StringUtils.isNotEmpty(entity.getEthusdt())){
+                    ethToExchange.put(entity.getEthusdt(), entity.getName());
                 }
+
+                //if(StringUtils.isNotEmpty(entity.getKlineurl())){
+                //    klineUrlToExchange.put(entity.getKlineurl(), entity.getName());
+                //}
             }
         }
     }
 
     public CommonMessageEntity convert(String uri, String content){
-        if(tradeUrlToExchange.containsKey(uri))
-            return new CommonMessageEntity(tradeUrlToExchange.get(uri),
-                    MessageType.TRADE.getType(), content);
-        else if(klineUrlToExchange.containsKey(uri))
-            return new CommonMessageEntity(klineUrlToExchange.get(uri),
-                    MessageType.KLINE.getType(), content);
+        if(btcToExchange.containsKey(uri))
+            return new CommonMessageEntity(btcToExchange.get(uri),
+                    MessageType.TRADE.getType(), "BTCUSDT", content);
+        else if(ethToExchange.containsKey(uri))
+            return new CommonMessageEntity(ethToExchange.get(uri),
+                    MessageType.TRADE.getType(), "ETHUSDT", content);
+        //else if(klineUrlToExchange.containsKey(uri))
+        //    return new CommonMessageEntity(klineUrlToExchange.get(uri),
+        //            MessageType.KLINE.getType(), content);
         else
             logger.error("Bad uri:" + uri);
         return null;
