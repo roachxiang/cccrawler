@@ -105,7 +105,7 @@ public class Crawler {
                         try {
                             String uri = request.getURI().toASCIIString();
                             String content = new String(IOUtils.toByteArray(response.getEntity().getContent()));
-                            logger.info(uri + ":" + content);
+                            logger.debug(uri + ":" + content);
                             CommonMessageEntity entity = messageConvertor.convert(uri, content);
                             kafkaProducer.send(entity);
                         } catch (IOException e) {
@@ -173,7 +173,7 @@ public class Crawler {
                         try {
                             String uri = request.getURI().toASCIIString();
                             String content = new String(IOUtils.toByteArray(response.getEntity().getContent()));
-                            logger.info(uri + ":" + content);
+                            logger.debug(uri + ":" + content);
                             CommonMessageEntity entity = messageConvertor.convert(uri, content);
                             kafkaProducer.send(entity);
                         } catch (IOException e) {
