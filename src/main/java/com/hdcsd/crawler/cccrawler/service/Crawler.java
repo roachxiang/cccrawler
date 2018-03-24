@@ -81,7 +81,7 @@ public class Crawler {
     @Scheduled(fixedRate = 1000)
     public void run() throws InterruptedException, IOException {
         logger.info("start crawler");
-        logger.info(JSON.toJSONString(properties.getList()));
+        logger.debug(JSON.toJSONString(properties.getList()));
         Stopwatch sw = Stopwatch.createStarted();
         RequestConfig requestConfig = RequestConfig.custom()
                 .setSocketTimeout(3000)
@@ -149,7 +149,7 @@ public class Crawler {
     @Scheduled(fixedRate = 60000)
     public void kline() throws InterruptedException, IOException {
         logger.info("start crawler");
-        logger.info(JSON.toJSONString(properties.getList()));
+        logger.debug(JSON.toJSONString(properties.getList()));
         Stopwatch sw = Stopwatch.createStarted();
         RequestConfig requestConfig = RequestConfig.custom()
                 .setSocketTimeout(3000)
