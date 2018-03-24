@@ -4,7 +4,8 @@ public class ExchangeEntity {
     private String name;
     private String btcusdt;
     private String ethusdt;
-    private String klineurl;
+    private String klinebtcusdt;
+    private String klineethusdt;
 
     public String getName() {
         return name;
@@ -30,11 +31,19 @@ public class ExchangeEntity {
         this.ethusdt = ethusdt;
     }
 
-    public String getKlineurl() {
-        return klineurl;
+    public String getKlinebtcusdt() {
+        return klinebtcusdt;
     }
 
-    public void setKlineurl(String klineurl) {
-        this.klineurl = klineurl;
+    public void setKlinebtcusdt(String klinebtcusdt) {
+        this.klinebtcusdt = klinebtcusdt;
+    }
+
+    public String getKlineethusdt() {
+        return klineethusdt;
+    }
+
+    public void setKlineethusdt(String klineethusdt) {
+        this.klineethusdt = klineethusdt;
     }
 }

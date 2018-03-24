@@ -63,9 +63,14 @@ public class Crawler {
                 httpGetList.add(new HttpGet(entity.getEthusdt()));
             }
 
-            if(StringUtils.isNotEmpty(entity.getKlineurl())) {
-                logger.info("Add new kline url:" + entity.getKlineurl());
-                httpKlineGetList.add(new HttpGet(entity.getKlineurl()));
+            if(StringUtils.isNotEmpty(entity.getKlinebtcusdt())) {
+                logger.info("Add new kline url:" + entity.getKlinebtcusdt());
+                httpKlineGetList.add(new HttpGet(entity.getKlinebtcusdt()));
+            }
+
+            if(StringUtils.isNotEmpty(entity.getKlineethusdt())) {
+                logger.info("Add new kline url:" + entity.getKlineethusdt());
+                httpKlineGetList.add(new HttpGet(entity.getKlineethusdt()));
             }
         }
 
@@ -139,5 +144,73 @@ public class Crawler {
         logger.info("time: " + millis);
         logger.info(String.format("Total %d success %d failed %d cancelled %d",
                 totalTrade, success, failed, cancelled));
+    }
+
+    @Scheduled(fixedRate = 60000)
+    public void kline() throws InterruptedException, IOException {
+        logger.info("start crawler");
+        logger.info(JSON.toJSONString(properties.getList()));
+        Stopwatch sw = Stopwatch.createStarted();
+        RequestConfig requestConfig = RequestConfig.custom()
+                .setSocketTimeout(3000)
+                .setConnectTimeout(3000).build();
+        CloseableHttpAsyncClient httpclient = HttpAsyncClients.custom()
+                .setDefaultRequestConfig(requestConfig)
+                .build();
+        try {
+            httpclient.start();
+            final CountDownLatch latch = new CountDownLatch(httpKlineGetList.size());
+            success = 0;
+            failed = 0;
+            cancelled = 0;
+            for (final HttpGet request : httpKlineGetList) {
+                httpclient.execute(request, new FutureCallback<HttpResponse>() {
+
+                    @Override
+                    public void completed(final HttpResponse response) {
+                        latch.countDown();
+                        success++;
+                        try {
+                            String uri = request.getURI().toASCIIString();
+                            String content = new String(IOUtils.toByteArray(response.getEntity().getContent()));
+                            logger.info(uri + ":" + content);
+                            CommonMessageEntity entity = messageConvertor.convert(uri, content);
+                            kafkaProducer.send(entity);
+                        } catch (IOException e) {
+                            logger.error(e.getMessage(), e);
+                        }
+                    }
+
+                    @Override
+                    public void failed(final Exception ex) {
+                        latch.countDown();
+                        failed++;
+                        logger.info(request.getRequestLine() + "->" + ex);
+                    }
+
+                    @Override
+                    public void cancelled() {
+                        latch.countDown();
+                        cancelled++;
+                        logger.info(request.getRequestLine() + " cancelled");
+                    }
+
+                });
+            }
+            latch.await();
+            logger.info("Shutting down");
+        }
+        catch (Exception e){
+            logger.error(e.getMessage(), e);
+        }
+        finally {
+            httpclient.close();
+        }
+        logger.info("Done");
+        sw.stop();
+        long millis = sw.elapsed(MILLISECONDS);
+        logger.info("time: " + millis);
+        logger.info(String.format("Kline total %d success %d failed %d cancelled %d",
+                totalKline, success, failed, cancelled));
     }
 }

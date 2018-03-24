@@ -23,3 +23,10 @@ exchange:
     - name: binance
       btcusdt: https://api.binance.com/api/v1/trades?symbol=BTCUSDT&limit=10
       ethusdt: https://api.binance.com/api/v1/trades?symbol=ETHUSDT&limit=10
+      klinebtcusdt: https://api.binance.com/api/v1/klines?symbol=BTCUSDT&interval=1m&limit=5
+      klineethusdt: https://api.binance.com/api/v1/klines?symbol=ETHUSDT&interval=1m&limit=5
+    - name: huobipro
+      btcusdt: https://api.huobipro.com/market/history/trade?symbol=btcusdt&size=10
+      ethusdt: https://api.huobipro.com/market/history/trade?symbol=ethusdt&size=10
+      klinebtcusdt: https://api.huobipro.com/market/history/kline?period=1min&size=5&symbol=btcusdt
+      klineethusdt: https://api.huobipro.com/market/history/kline?period=1min&size=5&symbol=ethusdt

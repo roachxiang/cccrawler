@@ -1,5 +1,6 @@
 package com.hdcsd.crawler.cccrawler.service;
 
+import com.alibaba.fastjson.JSONObject;
 import com.hdcsd.crawler.cccrawler.common.ExchangeProperties;
 import com.hdcsd.crawler.cccrawler.common.MessageType;
 import com.hdcsd.crawler.cccrawler.entity.CommonMessageEntity;
@@ -21,7 +22,8 @@ public class MessageConvertor {
 
     private Map<String, String> btcToExchange = new HashMap<>();
     private Map<String, String> ethToExchange = new HashMap<>();
-    //private Map<String, String> klineUrlToExchange = new HashMap<>();
+    private Map<String, String> klineBtcToExchange = new HashMap<>();
+    private Map<String, String> klineEthToExchange = new HashMap<>();
 
     @Autowired
     private ExchangeProperties properties;
@@ -39,25 +41,50 @@ public class MessageConvertor {
                     ethToExchange.put(entity.getEthusdt(), entity.getName());
                 }
 
-                //if(StringUtils.isNotEmpty(entity.getKlineurl())){
-                //    klineUrlToExchange.put(entity.getKlineurl(), entity.getName());
-                //}
+                if(StringUtils.isNotEmpty(entity.getKlinebtcusdt())){
+                    klineBtcToExchange.put(entity.getKlinebtcusdt(), entity.getName());
+                }
+
+                if(StringUtils.isNotEmpty(entity.getKlineethusdt())){
+                    klineEthToExchange.put(entity.getKlineethusdt(), entity.getName());
+                }
             }
         }
     }
 
     public CommonMessageEntity convert(String uri, String content){
-        if(btcToExchange.containsKey(uri))
-            return new CommonMessageEntity(btcToExchange.get(uri),
-                    MessageType.TRADE.getType(), "BTCUSDT", content);
-        else if(ethToExchange.containsKey(uri))
-            return new CommonMessageEntity(ethToExchange.get(uri),
-                    MessageType.TRADE.getType(), "ETHUSDT", content);
-        //else if(klineUrlToExchange.containsKey(uri))
-        //    return new CommonMessageEntity(klineUrlToExchange.get(uri),
-        //            MessageType.KLINE.getType(), content);
+        if(btcToExchange.containsKey(uri)) {
+            String exchange = btcToExchange.get(uri);
+            return new CommonMessageEntity(exchange, MessageType.TRADE.getType(),
+                     "BTCUSDT", convertByExchange(content, exchange));
+        }
+        else if(ethToExchange.containsKey(uri)) {
+            String exchange = ethToExchange.get(uri);
+            return new CommonMessageEntity(exchange, MessageType.TRADE.getType(),
+                     "ETHUSDT", convertByExchange(content, exchange));
+        }
+        else if(klineBtcToExchange.containsKey(uri)) {
+            String exchange = klineBtcToExchange.get(uri);
+            return new CommonMessageEntity(exchange, MessageType.KLINE.getType(),
+                     "BTCUSDT", convertByExchange(content, exchange));
+        }
+        else if(klineEthToExchange.containsKey(uri)) {
+            String exchange = klineEthToExchange.get(uri);
+            return new CommonMessageEntity(exchange, MessageType.KLINE.getType(),
+                    "ETHUSDT", convertByExchange(content, exchange));
+        }
         else
             logger.error("Bad uri:" + uri);
         return null;
+    }
+
+    private String convertByExchange(String content, String exchange){
+        if(exchange.equals("huobipro")){
+            JSONObject object = JSONObject.parseObject(content);
+            return object.getString("data");
+        }
+        else{
+            return  content;
+        }
     }
 }
