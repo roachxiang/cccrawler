@@ -2,10 +2,9 @@ package com.hdcsd.crawler.cccrawler.entity;
 
 public class ExchangeEntity {
     private String name;
-    private String btcusdt;
-    private String ethusdt;
-    private String klinebtcusdt;
-    private String klineethusdt;
+    private String tradeurl;
+    private String klineurl;
+    private String symbols;
 
     public String getName() {
         return name;
@@ -15,35 +14,27 @@ public class ExchangeEntity {
         this.name = name;
     }
 
-    public String getBtcusdt() {
-        return btcusdt;
+    public String getTradeurl() {
+        return tradeurl;
     }
 
-    public void setBtcusdt(String btcusdt) {
-        this.btcusdt = btcusdt;
+    public void setTradeurl(String tradeurl) {
+        this.tradeurl = tradeurl;
     }
 
-    public String getEthusdt() {
-        return ethusdt;
+    public String getKlineurl() {
+        return klineurl;
     }
 
-    public void setEthusdt(String ethusdt) {
-        this.ethusdt = ethusdt;
+    public void setKlineurl(String klineurl) {
+        this.klineurl = klineurl;
     }
 
-    public String getKlinebtcusdt() {
-        return klinebtcusdt;
+    public String getSymbols() {
+        return symbols;
     }
 
-    public void setKlinebtcusdt(String klinebtcusdt) {
-        this.klinebtcusdt = klinebtcusdt;
-    }
-
-    public String getKlineethusdt() {
-        return klineethusdt;
-    }
-
-    public void setKlineethusdt(String klineethusdt) {
-        this.klineethusdt = klineethusdt;
+    public void setSymbols(String symbols) {
+        this.symbols = symbols;
     }
 }

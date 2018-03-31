@@ -21,12 +21,42 @@ kafka:
 exchange:
   list:
     - name: binance
-      btcusdt: https://api.binance.com/api/v1/trades?symbol=BTCUSDT&limit=10
-      ethusdt: https://api.binance.com/api/v1/trades?symbol=ETHUSDT&limit=10
-      klinebtcusdt: https://api.binance.com/api/v1/klines?symbol=BTCUSDT&interval=1m&limit=5
-      klineethusdt: https://api.binance.com/api/v1/klines?symbol=ETHUSDT&interval=1m&limit=5
+      tradeurl: https://api.binance.com/api/v1/trades?symbol=%s&limit=10
+      klineurl: https://api.binance.com/api/v1/klines?symbol=%s&interval=1m&limit=5
+      symbols: BTCUSDT|BTCUSDT,ETHUSDT|ETHUSDT #逗号分割不同的symbol，竖线前面是查询用的，后面是发送消息用的
+    - name: zb
+      tradeurl: http://api.zb.com/data/v1/trades?market=%s
+      klineurl: http://api.zb.com/data/v1/kline?market=%s&type=1min&size=5
+      symbols: btc_usdt|BTCUSDT,eth_usdt|ETHUSDT
     - name: huobipro
-      btcusdt: https://api.huobipro.com/market/history/trade?symbol=btcusdt&size=10
-      ethusdt: https://api.huobipro.com/market/history/trade?symbol=ethusdt&size=10
-      klinebtcusdt: https://api.huobipro.com/market/history/kline?period=1min&size=5&symbol=btcusdt
-      klineethusdt: https://api.huobipro.com/market/history/kline?period=1min&size=5&symbol=ethusdt
+      tradeurl: https://api.huobipro.com/market/history/trade?symbol=%s&size=10
+      klineurl: https://api.huobipro.com/market/history/kline?period=1min&size=5&symbol=%s
+      symbols: btcusdt|BTCUSDT,ethusdt|ETHUSDT
+    - name: okex
+      tradeurl: https://www.okex.com/api/v1/trades.do?symbol=%s
+      klineurl: https://www.okex.com/api/v1/kline.do?symbol=%s&type=1min&size=5
+      symbols: btc_usdt|BTCUSDT,eth_usdt|ETHUSDT
+    - name: okcoinusd
+      tradeurl: https://www.okcoin.com/api/v1/trades.do?symbol=%s
+      klineurl: https://www.okcoin.com/api/v1/kline.do?symbol=%s&type=1min&size=5
+      symbols: btc_usd|BTCUSDT,eth_usd|ETHUSDT
+    - name: bittrex
+      tradeurl: https://bittrex.com/api/v1.1/public/getmarkethistory?market=%s
+      #klineurl: https://www.okcoin.com/api/v1/kline.do?symbol=%s&type=1min&size=5
+      symbols: USDT-BTC|BTCUSDT,USDT-ETH|ETHUSDT
+    - name: bitstamp
+      tradeurl: https://www.bitstamp.net/api/v2/transactions/%s/?time=minute
+      #klineurl: https://www.okcoin.com/api/v1/kline.do?symbol=%s&type=1min&size=5
+      symbols: btcusd|BTCUSDT,ethusd|ETHUSDT
+    #- name: kraken
+    #  tradeurl: https://api.kraken.com/0/public/Trades?pair=%s
+      #klineurl: https://www.okcoin.com/api/v1/kline.do?symbol=%s&type=1min&size=5
+    #  symbols: XETHZUSD|ETHUSDT
+    - name: bitstamp
+      tradeurl: https://www.bitstamp.net/api/v2/transactions/%s/?time=minute
+      #klineurl: https://www.okcoin.com/api/v1/kline.do?symbol=%s&type=1min&size=5
+      symbols: btcusd|BTCUSDT,ethusd|ETHUSDT
+    - name: gateio
+      tradeurl: http://data.gateio.io/api2/1/tradeHistory/%s
+      #klineurl: https://www.okcoin.com/api/v1/kline.do?symbol=%s&type=1min&size=5
+      symbols: btc_usdt|BTCUSDT,eth_usdt|ETHUSDT

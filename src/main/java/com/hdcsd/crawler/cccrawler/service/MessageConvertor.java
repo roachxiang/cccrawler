@@ -5,6 +5,7 @@ import com.hdcsd.crawler.cccrawler.common.ExchangeProperties;
 import com.hdcsd.crawler.cccrawler.common.MessageType;
 import com.hdcsd.crawler.cccrawler.entity.CommonMessageEntity;
 import com.hdcsd.crawler.cccrawler.entity.ExchangeEntity;
+import com.hdcsd.crawler.cccrawler.exchange.*;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,71 +22,132 @@ import java.util.Map;
 public class MessageConvertor {
     private Logger logger = LoggerFactory.getLogger(getClass());
 
-    private Map<String, String> btcToExchange = new HashMap<>();
-    private Map<String, String> ethToExchange = new HashMap<>();
-    private Map<String, String> klineBtcToExchange = new HashMap<>();
-    private Map<String, String> klineEthToExchange = new HashMap<>();
+    private Map<String, Map<String,String>> urlToInfo = new HashMap<>();
 
     @Autowired
     private ExchangeProperties properties;
+
+    @Autowired
+    private BinanceExchangeProcess biance;
+
+    @Autowired
+    private ZbExchangeProcess zb;
+
+    @Autowired
+    private HuobiproExchangeProcess huobipro;
+
+    @Autowired
+    private OkexExchangeProcess okex;
+
+    @Autowired
+    private OkcoinExchangeProcess okcoin;
+
+    @Autowired
+    private BittrexExchangeProcess bittrex;
+
+    @Autowired
+    private BitstampExchangeProcess bitstamp;
+
+    @Autowired
+    private GateioExchangeProcess gateio;
 
     @PostConstruct
     public void init(){
         List<ExchangeEntity> exchangeEntities = properties.getList();
         for(ExchangeEntity entity : exchangeEntities){
-            if(StringUtils.isNotEmpty(entity.getName())){
-                if(StringUtils.isNotEmpty(entity.getBtcusdt())){
-                    btcToExchange.put(entity.getBtcusdt(), entity.getName());
+            if(StringUtils.isNotEmpty(entity.getSymbols())) {
+                List<String> symbolList = Arrays.asList(entity.getSymbols().split(","));
+                if (StringUtils.isNotEmpty(entity.getTradeurl())) {
+                    for(String symbol : symbolList) {
+                        String[] tmp = symbol.split("\\|");
+                        String tradeurl = String.format(entity.getTradeurl(), tmp[0]);
+                        logger.info("Add new trade url:" + tradeurl);
+                        Map<String, String> infoMap = new HashMap<>();
+                        infoMap.put("exchange", entity.getName());
+                        infoMap.put("symbol", tmp[1]);
+                        infoMap.put("type", MessageType.TRADE.getType());
+                        urlToInfo.put(tradeurl, infoMap);
+                    }
                 }
 
-                if(StringUtils.isNotEmpty(entity.getEthusdt())){
-                    ethToExchange.put(entity.getEthusdt(), entity.getName());
-                }
-
-                if(StringUtils.isNotEmpty(entity.getKlinebtcusdt())){
-                    klineBtcToExchange.put(entity.getKlinebtcusdt(), entity.getName());
-                }
-
-                if(StringUtils.isNotEmpty(entity.getKlineethusdt())){
-                    klineEthToExchange.put(entity.getKlineethusdt(), entity.getName());
+                if (StringUtils.isNotEmpty(entity.getKlineurl())) {
+                    for(String symbol : symbolList) {
+                        String[] tmp = symbol.split("\\|");
+                        String klineurl = String.format(entity.getKlineurl(), tmp[0]);
+                        logger.info("Add new kline url:" + klineurl);
+                        Map<String, String> infoMap = new HashMap<>();
+                        infoMap.put("exchange", entity.getName());
+                        infoMap.put("symbol", tmp[1]);
+                        infoMap.put("type", MessageType.KLINE.getType());
+                        urlToInfo.put(klineurl, infoMap);
+                    }
                 }
             }
         }
     }
 
     public CommonMessageEntity convert(String uri, String content){
-        if(btcToExchange.containsKey(uri)) {
-            String exchange = btcToExchange.get(uri);
-            return new CommonMessageEntity(exchange, MessageType.TRADE.getType(),
-                     "BTCUSDT", convertByExchange(content, exchange));
-        }
-        else if(ethToExchange.containsKey(uri)) {
-            String exchange = ethToExchange.get(uri);
-            return new CommonMessageEntity(exchange, MessageType.TRADE.getType(),
-                     "ETHUSDT", convertByExchange(content, exchange));
-        }
-        else if(klineBtcToExchange.containsKey(uri)) {
-            String exchange = klineBtcToExchange.get(uri);
-            return new CommonMessageEntity(exchange, MessageType.KLINE.getType(),
-                     "BTCUSDT", convertByExchange(content, exchange));
-        }
-        else if(klineEthToExchange.containsKey(uri)) {
-            String exchange = klineEthToExchange.get(uri);
-            return new CommonMessageEntity(exchange, MessageType.KLINE.getType(),
-                    "ETHUSDT", convertByExchange(content, exchange));
+        if(urlToInfo.containsKey(uri)) {
+            Map<String, String> infoMap = urlToInfo.get(uri);
+            return new CommonMessageEntity(infoMap.get("exchange"), infoMap.get("type"),
+                     infoMap.get("symbol"),
+                    convertByExchange(content, infoMap.get("exchange"), infoMap.get("type"),
+                            infoMap.get("symbol")));
         }
         else
             logger.error("Bad uri:" + uri);
         return null;
     }
 
-    private String convertByExchange(String content, String exchange){
-        if(exchange.equals("huobipro")){
-            JSONObject object = JSONObject.parseObject(content);
-            return object.getString("data");
+    private String convertByExchange(String content, String exchange, String type, String symbol){
+        String key = exchange + type;
+        String result = null;
+        switch (key){
+            case "binancetrade":
+                result = biance.processTrade(exchange, symbol, content);
+                break;
+            case "binancekline":
+                result = biance.processKline(exchange, symbol, content);
+                break;
+            case "zbtrade":
+                result = zb.processTrade(exchange, symbol, content);
+                break;
+            case "zbkline":
+                result = zb.processKline(exchange,symbol,content);
+                break;
+            case "huobiprotrade":
+                result = huobipro.processTrade(exchange, symbol, content);
+                break;
+            case "huobiprokline":
+                result = huobipro.processKline(exchange, symbol, content);
+                break;
+            case "okextrade":
+                result = okex.processTrade(exchange, symbol, content);
+                break;
+            case "okexkline":
+                result = okex.processKline(exchange, symbol, content);
+                break;
+            case "okcoinusdtrade":
+                result = okcoin.processTrade(exchange, symbol, content);
+                break;
+            case "okcoinusdkline":
+                result = okcoin.processKline(exchange, symbol, content);
+                break;
+            case "bittrextrade":
+                result = bittrex.processTrade(exchange, symbol, content);
+                break;
+            case "bitstamptrade":
+                result = bitstamp.processTrade(exchange, symbol, content);
+                break;
+            case "gateiotrade":
+                result = gateio.processTrade(exchange, symbol, content);
+                break;
+            default:
+                logger.error(String.format("bad %s %s", exchange, type));
+                break;
         }
-        else{
-            return  content;
-        }
+
+        logger.info("result:" + exchange + ":" + type + ":" + symbol + ":" + result);
+        return result;
     }
 }

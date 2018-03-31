@@ -22,6 +22,7 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
@@ -53,24 +54,25 @@ public class Crawler {
     public void init(){
         List<ExchangeEntity> exchangeEntities = properties.getList();
         for(ExchangeEntity entity : exchangeEntities){
-            if(StringUtils.isNotEmpty(entity.getBtcusdt())) {
-                logger.info("Add new trade url:" + entity.getBtcusdt());
-                httpGetList.add(new HttpGet(entity.getBtcusdt()));
-            }
+            if(StringUtils.isNotEmpty(entity.getSymbols())) {
+                List<String> symbolList = Arrays.asList(entity.getSymbols().split(","));
+                if (StringUtils.isNotEmpty(entity.getTradeurl())) {
+                    for(String symbol : symbolList) {
+                        String[] tmp = symbol.split("\\|");
+                        String tradeurl = String.format(entity.getTradeurl(), tmp[0]);
+                        logger.info("Add new trade url:" + tradeurl);
+                        httpGetList.add(new HttpGet(tradeurl));
+                    }
+                }
 
-            if(StringUtils.isNotEmpty(entity.getEthusdt())) {
-                logger.info("Add new trade url:" + entity.getEthusdt());
-                httpGetList.add(new HttpGet(entity.getEthusdt()));
-            }
-
-            if(StringUtils.isNotEmpty(entity.getKlinebtcusdt())) {
-                logger.info("Add new kline url:" + entity.getKlinebtcusdt());
-                httpKlineGetList.add(new HttpGet(entity.getKlinebtcusdt()));
-            }
-
-            if(StringUtils.isNotEmpty(entity.getKlineethusdt())) {
-                logger.info("Add new kline url:" + entity.getKlineethusdt());
-                httpKlineGetList.add(new HttpGet(entity.getKlineethusdt()));
+                if (StringUtils.isNotEmpty(entity.getKlineurl())) {
+                    for(String symbol : symbolList) {
+                        String[] tmp = symbol.split("\\|");
+                        String klineurl = String.format(entity.getKlineurl(), tmp[0]);
+                        logger.info("Add new kline url:" + klineurl);
+                        httpKlineGetList.add(new HttpGet(klineurl));
+                    }
+                }
             }
         }
 
