@@ -147,7 +147,7 @@ public class MessageConvertor {
                 break;
         }
 
-        logger.info("result:" + exchange + ":" + type + ":" + symbol + ":" + result);
+        logger.debug("result:" + exchange + ":" + type + ":" + symbol + ":" + result);
         return result;
     }
 }
