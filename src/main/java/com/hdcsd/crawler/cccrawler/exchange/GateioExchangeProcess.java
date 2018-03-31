@@ -2,9 +2,11 @@ package com.hdcsd.crawler.cccrawler.exchange;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import org.springframework.stereotype.Component;
 
 import java.util.Iterator;
 
+@Component
 public class GateioExchangeProcess extends ExchangeProcessBase {
     @Override
     public String processTrade(String exchange, String symbol, String content) {
