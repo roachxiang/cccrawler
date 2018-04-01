@@ -8,6 +8,14 @@ import java.util.Iterator;
 
 @Component
 public class BitstampExchangeProcess extends ExchangeProcessBase {
+
+    /*
+    date	Unix timestamp date and time.
+    tid	Transaction ID.
+    price	BTC price.
+    amount	BTC amount.
+    type	0 (buy) or 1 (sell).
+     */
     @Override
     public String processTrade(String exchange, String symbol, String content) {
         JSONArray jsonArray = JSONArray.parseArray(content);

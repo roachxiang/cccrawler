@@ -80,7 +80,7 @@ public class Crawler {
         totalKline = httpKlineGetList.size();
     }
 
-    @Scheduled(fixedRate = 1000)
+    @Scheduled(fixedRate = 10000)
     public void run() throws InterruptedException, IOException {
         logger.info("start crawler");
         logger.debug(JSON.toJSONString(properties.getList()));

@@ -52,10 +52,6 @@ exchange:
     #  tradeurl: https://api.kraken.com/0/public/Trades?pair=%s
       #klineurl: https://www.okcoin.com/api/v1/kline.do?symbol=%s&type=1min&size=5
     #  symbols: XETHZUSD|ETHUSDT
-    - name: bitstamp
-      tradeurl: https://www.bitstamp.net/api/v2/transactions/%s/?time=minute
-      #klineurl: https://www.okcoin.com/api/v1/kline.do?symbol=%s&type=1min&size=5
-      symbols: btcusd|BTCUSDT,ethusd|ETHUSDT
     - name: gateio
       tradeurl: http://data.gateio.io/api2/1/tradeHistory/%s
       #klineurl: https://www.okcoin.com/api/v1/kline.do?symbol=%s&type=1min&size=5

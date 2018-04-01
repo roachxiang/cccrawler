@@ -8,6 +8,22 @@ import java.util.Iterator;
 
 @Component
 public class OkcoinExchangeProcess extends ExchangeProcessBase {
+    /*
+    {
+        "date": "1367130137",
+        "date_ms": "1367130137000",
+        "price": 787.5,
+        "amount": 0.091,
+        "tid": "230435",
+        "type": "sell"
+    }
+    date:交易时间
+    date_ms:交易时间(ms)
+    price: 交易价格
+    amount: 交易数量
+    tid: 交易生成ID
+    type: buy/sell
+     */
     @Override
     public String processTrade(String exchange, String symbol, String content) {
         JSONArray jsonArray = JSONArray.parseArray(content);
@@ -24,6 +40,16 @@ public class OkcoinExchangeProcess extends ExchangeProcessBase {
         return jsonArrayResult.toJSONString();
     }
 
+    /*
+    [
+	1417536000000,	时间戳
+	2370.16,	开
+	2380,	        高
+	2352,	        低
+	2367.37,	收
+	17259.83	交易量
+    ]
+     */
     @Override
     public String processKline(String exchange, String symbol, String content) {
         JSONArray jsonArray = JSONArray.parseArray(content);
