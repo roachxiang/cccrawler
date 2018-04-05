@@ -52,9 +52,9 @@ public class ZbExchangeProcess extends ExchangeProcessBase {
      */
     @Override
     public String processKline(String exchange, String symbol, String content) {
-        JSONArray jsonArray = JSONArray.parseArray(content);
+        JSONObject jsonObject = JSONObject.parseObject(content);
         JSONArray jsonArrayResult = new JSONArray();
-        for (Iterator iterator = jsonArray.iterator(); iterator.hasNext();) {
+        for (Iterator iterator = jsonObject.getJSONArray("data").iterator(); iterator.hasNext();) {
             JSONArray jsonArrayTmp = (JSONArray) iterator.next();
             Long id = jsonArrayTmp.getLong(0);
             String key = exchange + symbol + id;
