@@ -1,6 +1,5 @@
 package com.hdcsd.crawler.cccrawler.service;
 
-import com.alibaba.fastjson.JSONObject;
 import com.hdcsd.crawler.cccrawler.common.ExchangeProperties;
 import com.hdcsd.crawler.cccrawler.common.MessageType;
 import com.hdcsd.crawler.cccrawler.entity.CommonMessageEntity;

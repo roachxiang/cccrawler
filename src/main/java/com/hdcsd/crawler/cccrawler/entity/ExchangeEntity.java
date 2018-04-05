@@ -5,6 +5,7 @@ public class ExchangeEntity {
     private String tradeurl;
     private String klineurl;
     private String symbols;
+    private String period;
 
     public String getName() {
         return name;
@@ -36,5 +37,13 @@ public class ExchangeEntity {
 
     public void setSymbols(String symbols) {
         this.symbols = symbols;
+    }
+
+    public String getPeriod() {
+        return period;
+    }
+
+    public void setPeriod(String period) {
+        this.period = period;
     }
 }
