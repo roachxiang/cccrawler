@@ -1,0 +1,63 @@
+spring:
+  application:
+    name: cccrawler
+  kafka:
+    bootstrap-servers: 47.94.216.42:9092
+    producer:
+      retries: 0
+      batch-size: 16384
+      buffer-memory: 33554432
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+
+logging:
+  level:
+    root: INFO
+
+kafka:
+  default:
+    topic: tradedata
+
+exchange:
+  list:
+    - name: binance
+      tradeurl: https://api.binance.com/api/v1/trades?symbol=%s&limit=10
+      klineurl: https://api.binance.com/api/v1/klines?symbol=%s&interval=1m&limit=5
+      #逗号分割不同的symbol，竖线前面是查询用的，后面是发送消息用的
+      symbols: BTCUSDT|BTCUSDT,ETHUSDT|ETHUSDT,LTCUSDT|LTCUSDT
+      period: 10
+    - name: zb
+      tradeurl: http://api.zb.com/data/v1/trades?market=%s
+      klineurl: http://api.zb.com/data/v1/kline?market=%s&type=1min&size=5
+      symbols: btc_usdt|BTCUSDT,eth_usdt|ETHUSDT,etc_usdt|ETCUSDT,ltc_usdt|LTCUSDT,eos_usdt|EOSUSDT,xrp_usdt|XRPUSDT,dash_usdt|DASHUSDT
+      period: 10
+    - name: huobipro
+      tradeurl: https://api.huobipro.com/market/history/trade?symbol=%s&size=10
+      klineurl: https://api.huobipro.com/market/history/kline?period=1min&size=5&symbol=%s
+      symbols: btcusdt|BTCUSDT,ethusdt|ETHUSDT,bchusdt|BCHUSDT,etcusdt|ETCUSDT,ltcusdt|LTCUSDT,eosusdt|EOSUSDT,xrpusdt|XRPUSDT,omgusdt|OMGUSDT,dashusdt|DASJISDT,zecusdt|ZECUSDT
+      period: 10
+    - name: okex
+      tradeurl: https://www.okex.com/api/v1/trades.do?symbol=%s
+      klineurl: https://www.okex.com/api/v1/kline.do?symbol=%s&type=1min&size=5
+      symbols: btc_usdt|BTCUSDT,eth_usdt|ETHUSDT,bch_usdt|BCHUSDT,etc_usdt|ETCUSDT,ltc_usdt|LTCUSDT,eos_usdt|EOSUSDT,xrp_usdt|XRPUSDT,omg_usdt|OMGUSDT,dash_usdt|DASHUSDT,zec_usdt|ZECUSDT
+      period: 10
+    - name: okcoinusd
+      tradeurl: https://www.okcoin.com/api/v1/trades.do?symbol=%s
+      klineurl: https://www.okcoin.com/api/v1/kline.do?symbol=%s&type=1min&size=5
+      symbols: btc_usd|BTCUSDT,eth_usd|ETHUSDT,bch_usd|BCHUSDT,etc_usd|ETCUSDT,ltc_usd|LTCUSDT
+      period: 10
+    - name: bittrex
+      tradeurl: https://bittrex.com/api/v1.1/public/getmarkethistory?market=%s
+      #klineurl: https://www.okcoin.com/api/v1/kline.do?symbol=%s&type=1min&size=5
+      symbols: USDT-BTC|BTCUSDT,USDT-ETH|ETHUSDT,USDT-ETC|ETCUSDT,USDT-LTC|LTCUSDT,USDT-XRP|XRPUSDT,USDT-OMG|OMGUSDT,USDT-DASH|DASHUSDT,USDT-ZEC|ZECUSDT
+      period: 10
+    - name: bitstamp
+      tradeurl: https://www.bitstamp.net/api/v2/transactions/%s/?time=minute
+      #klineurl: https://www.okcoin.com/api/v1/kline.do?symbol=%s&type=1min&size=5
+      symbols: btcusd|BTCUSDT,ethusd|ETHUSDT,ltcusd|LTCUSDT,bchusd|BCHUSDT,xrpusd|XRPUSDT
+      period: 30
+    - name: gateio
+      tradeurl: http://data.gateio.io/api2/1/tradeHistory/%s
+      #klineurl: https://www.okcoin.com/api/v1/kline.do?symbol=%s&type=1min&size=5
+      symbols: btc_usdt|BTCUSDT,eth_usdt|ETHUSDT,bch_usdt|BCHUSDT,etc_usdt|ETCUSDT,ltc_usdt|LTCUSDT,eos_usdt|EOSUSDT,xrp_usdt|XRPUSDT,omg_usdt|OMGUSDT,dash_usdt|DASHUSDT,zec_usdt|ZECUSDT
+      period: 20
